@@ -5,7 +5,7 @@ import time
 
 
 
-foldername="legalpdf2.2/"
+foldername="legalpdf/"
 IncompleteError=[]
 
 
