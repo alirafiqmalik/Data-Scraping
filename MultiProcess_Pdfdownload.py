@@ -2,7 +2,6 @@ import os
 import urllib.request
 from multiprocessing import Process
 import time
-#from multiprocessing import Pool
 
 
 
