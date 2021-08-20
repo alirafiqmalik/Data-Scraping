@@ -1,6 +1,33 @@
 import os
-import textract
 from os.path import isfile, join
+
+from io import StringIO
+
+from pdfminer.converter import TextConverter
+from pdfminer.layout import LAParams
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+from pdfminer.pdfpage import PDFPage
+from pdfminer.pdfdocument import PDFDocument
+from pdfminer.pdfparser import PDFParser
+
+
+import csv
+
+
+def convert_pdf_to_string(file_path):
+  output_string = StringIO()
+  with open(file_path, 'rb') as in_file:
+    parser = PDFParser(in_file)
+    doc = PDFDocument(parser)
+    rsrcmgr = PDFResourceManager()
+    device = TextConverter(rsrcmgr, output_string, laparams=LAParams())
+    interpreter = PDFPageInterpreter(rsrcmgr, device)
+    for page in PDFPage.create_pages(doc):
+      interpreter.process_page(page)
+
+  return (output_string.getvalue())
+
+
 
 
 foldername="legalpdf/"
@@ -17,7 +44,7 @@ def createdir(path):
 def pdf_to_txt(x):
   try:
     filepath=foldername+x
-    text = textract.process(filepath).decode("utf-8")
+    text=convert_pdf_to_string(filepath)
     dstfile=txtpath+x[0:-4]+".txt"
     print("File %s Converted to %s"%(filepath, dstfile))
     file=open(dstfile,"w")
@@ -32,19 +59,15 @@ print(len(onlyfiles))
 
 createdir(txtpath)
 
-#for i in range(len(onlyfiles)):
-#  try:
-#    pdf_to_txt(onlyfiles[i])
-#  except OSError as er:
-#    print(er,i)
+filepath='legalpdf/2011LHC4000.pdf'
 
-print(onlyfiles[0])
-#.decode("utf-8")
-print(textract.process(foldername+onlyfiles[0]))
+
+text = convert_pdf_to_string(filepath)
+print(text)
+
 
 
 #for i in onlyfiles:
 #  pdf_to_txt(i)
-
 
 
